@@ -3,7 +3,7 @@ import { Auth0Service } from '@codelab/modules/auth-api';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../../app.module';
 import { print } from 'graphql';
-import { CreateAppGql, CreateAppMutation, CreateAppMutationVariables } from '@codelab/codegen/graphql';
+import { __AppFragment, CreateAppGql, CreateAppMutation, CreateAppMutationVariables } from '@codelab/codegen/graphql';
 import { ApolloQueryResult } from '@apollo/client';
 
 export const createApp = async (accessToken: string,
@@ -60,7 +60,7 @@ describe('CreateApp', () => {
   })
 
   it('should create app', async () => {
-    const result: any = await createApp(accessToken, app)
+    const result: __AppFragment = await createApp(accessToken, app)
     expect(result.name).toEqual('Test App')
   })
 })

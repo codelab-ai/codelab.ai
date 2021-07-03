@@ -1,6 +1,5 @@
 import { INestApplication } from '@nestjs/common';
 import { ApiResponse, request, setupTestModule, teardownTestModule } from '@codelab/backend';
-import { Auth0Service } from '@codelab/modules/auth-api';
 import { PageModule } from '../../page.module';
 import { print } from 'graphql';
 import {
@@ -12,10 +11,10 @@ import {
 } from '@codelab/codegen/graphql';
 import { ApolloQueryResult } from '@apollo/client';
 import { createApp } from '../testHelpers';
+import { AppModule } from '@codelab/modules/app-api';
 
-export const createPage = async (accessToken: string,
-                                 nestApplication: INestApplication): Promise<{ app: __AppFragment, page: PageBaseFragment }> => {
-  const app: __AppFragment = await createApp(accessToken, nestApplication)
+export const createPage = async (nestApplication: INestApplication, accessToken: string = '',): Promise<{ app: __AppFragment, page: PageBaseFragment }> => {
+  const app: __AppFragment = await createApp(accessToken)
   const variables: CreatePageMutationVariables  = {
     input: {
       appId: app.id,
@@ -31,7 +30,6 @@ export const createPage = async (accessToken: string,
     })
     .expect(200)
     .then((res) => (res.body.data as CreatePageMutation)?.createPage)
-
   return {
     app, page
   }
@@ -39,22 +37,27 @@ export const createPage = async (accessToken: string,
 
 describe('CreatePage', () => {
   let nestApplication: INestApplication
-  let accessToken = ''
   let app: any
 
-  beforeAll(async () => {
-    nestApplication = await setupTestModule(nestApplication, PageModule)
+  // beforeAll(async () => {
+  //   nestApplication = await setupTestModule(true, PageModule)
+  //
+  //   const auth0Service = nestApplication.get(Auth0Service)
+  //   // accessToken = await auth0Service.getAccessToken()
+  //   app = await createApp(nestApplication)
+  // })
 
-    const auth0Service = nestApplication.get(Auth0Service)
-    accessToken = await auth0Service.getAccessToken()
-    app = await createApp(accessToken, nestApplication)
-  })
+  // afterAll(async () => {
+  //   await teardownTestModule(nestApplication)
+  // })
 
-  afterAll(async () => {
+  afterEach(async () => {
     await teardownTestModule(nestApplication)
   })
 
-  it('should fail to create page for guest', async () => {
+  it.skip('should fail to create page for guest', async () => {
+    app = await createApp()
+    nestApplication = await setupTestModule(false, AppModule, PageModule)
     const variables: CreatePageMutationVariables = {
       input: {
         appId: app.id,
@@ -73,7 +76,8 @@ describe('CreatePage', () => {
   })
 
   it('should create page for authorized user', async () => {
-    const result: { app: __AppFragment, page: PageBaseFragment } = await createPage(accessToken, nestApplication)
+    nestApplication = await setupTestModule(true, AppModule, PageModule)
+    const result: { app: __AppFragment, page: PageBaseFragment } = await createPage(nestApplication)
     expect(result.page.id).toBeDefined()
     expect(result.page.name).toEqual('Test Page')
     expect(result.page.app).toMatchObject(result.app)

@@ -1,5 +1,4 @@
-import { ApiResponse, request, setupTestModule, teardownTestModule } from '@codelab/backend';
-import { Auth0Service } from '@codelab/modules/auth-api';
+import { ApiResponse, Auth0Service, request, setupTestModule, teardownTestModule } from '@codelab/backend';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../../app.module';
 import { print } from 'graphql';
@@ -31,10 +30,10 @@ describe('CreateApp', () => {
   let accessToken = ''
 
   beforeAll(async () => {
-    app = await setupTestModule(app, AppModule)
+    app = await setupTestModule(true, AppModule)
 
-    const auth0Service = app.get(Auth0Service)
-    accessToken = await auth0Service.getAccessToken()
+    // const auth0Service = app.get(Auth0Service)
+    // accessToken = await auth0Service.getAccessToken()
   })
 
   afterAll(async () => {

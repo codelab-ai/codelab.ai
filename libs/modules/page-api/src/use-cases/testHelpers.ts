@@ -1,10 +1,11 @@
-import { INestApplication } from '@nestjs/common';
 import { __AppFragment, CreateAppGql, CreateAppMutation, CreateAppMutationVariables } from '@codelab/codegen/graphql';
-import { request } from '@codelab/backend';
+import { ApiResponse, request, setupTestModule } from '@codelab/backend';
 import { print } from 'graphql';
+import { ApolloQueryResult } from '@apollo/client';
+import { AppModule } from '@codelab/modules/app-api';
 
-export const createApp = async (accessToken: string,
-                                app: INestApplication,) => {
+export const createApp = async (accessToken: string ='') => {
+  const app = await setupTestModule(true, AppModule)
   const variables: CreateAppMutationVariables = {
     input: {
       name: 'Test App'
@@ -18,7 +19,12 @@ export const createApp = async (accessToken: string,
       variables,
     })
     .expect(200)
+    // .expect((res: ApiResponse<ApolloQueryResult<any>>) => {
+    //   const a = ''
+    // })
     .then((res: any) => (res.body.data as CreateAppMutation)?.createApp)
+
+  await app.close()
 
   return r
 }

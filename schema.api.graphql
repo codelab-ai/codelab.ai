@@ -332,18 +332,12 @@ type Element {
   props: [PropAggregate!]!
 }
 
-"""
-An edge between two element nodes
-"""
+"""An edge between two element nodes"""
 type ElementLink {
-  """
-  The id of the source Element
-  """
+  """The id of the source Element"""
   from: String!
 
-  """
-  The id of the target Element
-  """
+  """The id of the target Element"""
   to: String!
   order: Int!
 }
@@ -355,14 +349,10 @@ type ElementAggregate {
   atom: Atom
   props: [PropAggregate!]!
 
-  """
-  All descendant Elements that are under this root, at any level
-  """
+  """All descendant Elements that are under this root, at any level"""
   descendants: [Element!]!
 
-  """
-  All the links connecting the descendant elements
-  """
+  """All the links connecting the descendant elements"""
   links: [ElementLink!]!
 }
 
@@ -520,9 +510,7 @@ type Mutation {
   updateElement(input: UpdateElementInput!): Element!
   moveElement(input: MoveElementInput!): Element!
 
-  """
-  Deletes an element and all the descending elements
-  """
+  """Deletes an element and all the descending elements"""
   deleteElement(input: DeleteElementInput!): DeleteResponse!
   createAtom(input: CreateAtomInput!): Atom!
   deleteAtom(input: DeleteAtomInput!): DeleteResponse!
